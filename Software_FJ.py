@@ -75,7 +75,85 @@ class Entity(ABC):
 # CUSTOMER CLASS
 
 class Customer(Entity):
-    pass
+
+    def __init__(self, id, name, email, phone):
+
+        super().__init__(id)
+
+        self.__validate_name(name)
+        self.__validate_email(email)
+        self.__validate_phone(phone)
+
+        self.__name = name
+        self.__email = email
+        self.__phone = phone
+
+
+    # VALIDATIONS
+
+    def __validate_name(self, name):
+
+        if name.strip() == "":
+
+            raise InvalidCustomerError(
+                "Customer name cannot be empty."
+            )
+
+
+    def __validate_email(self, email):
+
+        if "@" not in email or "." not in email:
+
+            raise InvalidCustomerError(
+                "Invalid email address."
+            )
+
+
+    def __validate_phone(self, phone):
+
+        if not phone.isdigit():
+
+            raise InvalidCustomerError(
+                "Phone must contain only numbers."
+            )
+
+        if len(phone) != 10:
+
+            raise InvalidCustomerError(
+                "Phone must have 10 digits."
+            )
+
+
+    # PROPERTIES
+
+    @property
+    def name(self):
+
+        return self.__name
+
+
+    @property
+    def email(self):
+
+        return self.__email
+
+
+    @property
+    def phone(self):
+
+        return self.__phone
+
+
+    # POLYMORPHISM
+
+    def display(self):
+
+        return (
+            f"ID: {self.id} | "
+            f"Name: {self.name} | "
+            f"Email: {self.email} | "
+            f"Phone: {self.phone}"
+        )
 
 # SERVICE CLASS
 
@@ -118,4 +196,17 @@ class Reservation:
 
 if __name__ == "__main__":
 
-    print("Software FJ started successfully.")
+    try:
+
+        customer = Customer(
+            1,
+            "Juan Camilo",
+            "juan@gmail.com",
+            "3001234567"
+        )
+
+        print(customer.display())
+
+    except Exception as error:
+
+        print(error)
