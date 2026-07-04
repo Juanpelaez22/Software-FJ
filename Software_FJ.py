@@ -115,3 +115,7 @@ class Reservation:
 
 
 # MAIN
+
+if __name__ == "__main__":
+
+    print("Software FJ started successfully.")
