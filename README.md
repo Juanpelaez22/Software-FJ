@@ -63,7 +63,7 @@ Software-FJ/
 1. Clone the repository.
 
 ```bash
-git clone https://github.com/TU-USUARIO/Software-FJ.git
+git clone https://github.com/Juanpelaez22/Software-FJ.git
 ```
 
 2. Open the project using Visual Studio Code.
