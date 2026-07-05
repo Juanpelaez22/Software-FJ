@@ -509,6 +509,9 @@ def display_customers():
         print(customer.display())
 
 
+
+
+
 ## SERVICE FUNCTIONS
 
 def add_service(service):
@@ -616,6 +619,87 @@ def display_reservations():
         print(reservation.display())
 
 
+# TKINTER FUNCTIONS
+
+
+
+def add_customer_interface():
+
+    try:
+
+        customer = Customer(
+
+            entry_name.get(),
+
+            entry_email.get(),
+
+            entry_phone.get()
+
+        )
+
+        add_customer(customer)
+
+        refresh_customer_table()
+
+        update_customer_combobox()
+
+        
+        entry_name.delete(0, tk.END)
+        entry_email.delete(0, tk.END)
+        entry_phone.delete(0, tk.END)
+
+        messagebox.showinfo(
+            "Success",
+            "Customer added successfully."
+        )
+
+    except Exception as error:
+
+        write_log(str(error))
+
+        messagebox.showerror(
+            "Error",
+            str(error)
+        )
+
+def refresh_customer_table():
+
+    customer_table.delete(*customer_table.get_children())
+
+    for customer in customers:
+
+        customer_table.insert(
+
+            "",
+
+            "end",
+
+            values=(
+
+                customer.id,
+
+                customer.name,
+
+                customer.email,
+
+                customer.phone
+
+            )
+
+        )
+
+
+def update_customer_combobox():
+
+    combo_customer["values"] = [
+
+        customer.name
+
+        for customer in customers
+
+    ]
+
+
 # TKINTER INTERFACE
 root = tk.Tk()
 
@@ -719,7 +803,8 @@ button_add_customer = tk.Button(
 
     customer_frame,
     text="Add Customer",
-    width=15
+    width=15,
+    command=add_customer_interface
 
 )
 
