@@ -19,3 +19,17 @@
 2026-07-05 18:07:48.729261 - Reservation confirmed for Juan Andres
 2026-07-05 18:07:50.963276 - Reservation cancelled for Juan Andres
 2026-07-05 18:07:53.481212 - Reservation confirmed for Juan Andres
+2026-07-05 18:26:15.423692 - Customer added: Juan Pérez
+2026-07-05 18:26:39.975462 - Customer added: María López
+2026-07-05 18:26:59.139385 - Invalid email address.
+2026-07-05 18:28:12.517448 - Phone must have 10 digits.
+2026-07-05 18:28:43.933470 - Service added: Sala A
+2026-07-05 18:29:00.119546 - Service added: Video Beam
+2026-07-05 18:29:13.335514 - Service already exists.
+2026-07-05 18:30:09.729516 - Service added: History
+2026-07-05 18:30:28.195567 - Reservation created for Juan Pérez
+2026-07-05 18:30:36.291592 - Reservation confirmed for Juan Pérez
+2026-07-05 18:30:51.777650 - Reservation created for María López
+2026-07-05 18:30:58.369597 - Reservation cancelled for María López
+2026-07-05 18:31:13.925518 - Duration must be greater than zero.
+2026-07-05 18:31:26.523627 - Reservation created for Juan Pérez
