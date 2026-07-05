@@ -58,14 +58,19 @@ class OperationNotAllowedError(SystemError):
 
 class Entity(ABC):
 
-    def __init__(self, id):
+    _next_id = 1
 
-        self._id = id
+    def __init__(self):
+
+        self._id = Entity._next_id
+        Entity._next_id += 1
+
 
     @property
     def id(self):
 
         return self._id
+
 
     @abstractmethod
     def display(self):
@@ -76,9 +81,9 @@ class Entity(ABC):
 
 class Customer(Entity):
 
-    def __init__(self, id, name, email, phone):
+    def __init__(self, name, email, phone):
 
-        super().__init__(id)
+        super().__init__()
 
         self.__validate_name(name)
         self.__validate_email(email)
@@ -196,17 +201,4 @@ class Reservation:
 
 if __name__ == "__main__":
 
-    try:
-
-        customer = Customer(
-            1,
-            "Juan Camilo",
-            "juan@gmail.com",
-            "3001234567"
-        )
-
-        print(customer.display())
-
-    except Exception as error:
-
-        print(error)
+    print("Software FJ started successfully.")
