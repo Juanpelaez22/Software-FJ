@@ -435,12 +435,178 @@ class Reservation:
         )
 
 # LISTS
+# Internal lists used to store system information
+
+customers = []
+
+services = []
+
+reservations = []
+
+# FUNCTIONS 
+
+## CURSTOMER FUNCTIONS
+
+def add_customer(customer):
+
+    for item in customers:
+
+        if item.email == customer.email:
+
+            raise InvalidCustomerError(
+                "Email already registered."
+            )
+
+    customers.append(customer)
+
+    write_log(
+        f"Customer added: {customer.name}"
+    )
 
 
+def find_customer(customer_id):
 
-# FUNCTIONS
+    for customer in customers:
+
+        if customer.id == customer_id:
+
+            return customer
+
+    return None
 
 
+def delete_customer(customer_id):
+
+    customer = find_customer(customer_id)
+
+    if customer is None:
+
+        raise InvalidCustomerError(
+            "Customer not found."
+        )
+
+    customers.remove(customer)
+
+    write_log(
+        f"Customer deleted: {customer.name}"
+    )
+
+
+def display_customers():
+
+    for customer in customers:
+
+        print(customer.display())
+
+
+## SERVICE FUNCTIONS
+
+def add_service(service):
+
+    for item in services:
+
+        if item.name.lower() == service.name.lower():
+
+            raise InvalidServiceError(
+                "Service already exists."
+            )
+
+    services.append(service)
+
+    write_log(
+        f"Service added: {service.name}"
+    )
+
+
+def find_service(service_id):
+
+    for service in services:
+
+        if service.id == service_id:
+
+            return service
+
+    return None
+
+
+def delete_service(service_id):
+
+    service = find_service(service_id)
+
+    if service is None:
+
+        raise InvalidServiceError(
+            "Service not found."
+        )
+
+    services.remove(service)
+
+    write_log(
+        f"Service deleted: {service.name}"
+    )
+
+
+def display_services():
+
+    for service in services:
+
+        print(service.display())
+
+## SERVICE FUNCTIONS
+
+def create_reservation(customer_id, service_id, duration):
+
+    customer = find_customer(customer_id)
+
+    if customer is None:
+
+        raise InvalidReservationError(
+            "Customer not found."
+        )
+
+    service = find_service(service_id)
+
+    if service is None:
+
+        raise InvalidReservationError(
+            "Service not found."
+        )
+
+    reservation = Reservation(
+        customer,
+        service,
+        duration
+    )
+
+    reservations.append(reservation)
+
+    write_log(
+        f"Reservation created for {customer.name}"
+    )
+
+    return reservation
+
+
+def confirm_reservation(reservation):
+
+    reservation.confirm()
+
+
+def cancel_reservation(reservation):
+
+    reservation.cancel()
+
+
+def process_reservation(reservation):
+
+    return reservation.process()
+
+
+def display_reservations():
+
+    for reservation in reservations:
+
+        print(reservation.display())
 
 # TKINTER INTERFACE
 
