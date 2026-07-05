@@ -88,7 +88,6 @@ class Customer(Entity):
         self.__validate_name(name)
         self.__validate_email(email)
         self.__validate_phone(phone)
-
         self.__name = name
         self.__email = email
         self.__phone = phone
@@ -170,7 +169,6 @@ class Service(Entity, ABC):
 
         self.__validate_name(name)
         self.__validate_price(price)
-
         self.__name = name
         self.__price = price
 
@@ -269,10 +267,7 @@ class RoomReservation(Service):
 
 
         if tax:
-
             total *= 1.19
-
-
         return total
 
 # EQUIPMENT RENTAL
@@ -280,14 +275,12 @@ class RoomReservation(Service):
 class EquipmentRental(Service):
 
     def __init__(self, name, price):
-
         super().__init__(name, price)
 
 
     # POLYMORPHISM
 
     def description(self):
-
         return (
             f"Equipment Rental - "
             f"${self.price} per day"
@@ -303,21 +296,17 @@ class EquipmentRental(Service):
     ):
 
         if days <= 0:
-
             raise InvalidServiceError(
                 "Days must be greater than zero."
             )
 
 
         if discount < 0 or discount > 1:
-
             raise InvalidServiceError(
                 "Invalid discount."
             )
 
-
         total = self.price * days
-
         total -= total * discount
 
         return total
@@ -327,7 +316,6 @@ class EquipmentRental(Service):
 class ConsultingService(Service):
 
     def __init__(self, name, price):
-
         super().__init__(name, price)
 
 
@@ -404,7 +392,6 @@ class Reservation:
     def process(self):
 
         try:
-
             total = self.service.calculate_cost(
                 self.duration
             )
@@ -437,11 +424,9 @@ class Reservation:
     def display(self):
 
         return (
-
             f"Customer: {self.customer.name} | "
             f"Service: {self.service.name} | "
             f"Status: {self.status}"
-
         )
 
 # LISTS
@@ -460,9 +445,7 @@ reservations = []
 def add_customer(customer):
 
     for item in customers:
-
         if item.email == customer.email:
-
             raise InvalidCustomerError(
                 "Email already registered."
             )
@@ -475,10 +458,17 @@ def add_customer(customer):
 
 
 def find_customer(customer_id):
+    for customer in customers:
+        if customer.id == customer_id:
+
+            return customer
+
+    return None
+
+def find_customer_by_name(name):
 
     for customer in customers:
-
-        if customer.id == customer_id:
+        if customer.name == name:
 
             return customer
 
@@ -490,7 +480,6 @@ def delete_customer(customer_id):
     customer = find_customer(customer_id)
 
     if customer is None:
-
         raise InvalidCustomerError(
             "Customer not found."
         )
@@ -503,9 +492,7 @@ def delete_customer(customer_id):
 
 
 def display_customers():
-
     for customer in customers:
-
         print(customer.display())
 
 
@@ -541,13 +528,20 @@ def find_service(service_id):
 
     return None
 
+def find_service_by_name(name):
+
+    for service in services:
+
+        if service.name == name:
+
+            return service
+
+    return None
 
 def delete_service(service_id):
 
     service = find_service(service_id)
-
     if service is None:
-
         raise InvalidServiceError(
             "Service not found."
         )
@@ -562,28 +556,11 @@ def delete_service(service_id):
 def display_services():
 
     for service in services:
-
         print(service.display())
 
 ## RESERVATION FUNCTIONS
 
-def create_reservation(customer_id, service_id, duration):
-
-    customer = find_customer(customer_id)
-
-    if customer is None:
-
-        raise InvalidReservationError(
-            "Customer not found."
-        )
-
-    service = find_service(service_id)
-
-    if service is None:
-
-        raise InvalidReservationError(
-            "Service not found."
-        )
+def create_reservation(customer, service, duration):
 
     reservation = Reservation(
         customer,
@@ -618,6 +595,18 @@ def display_reservations():
 
         print(reservation.display())
 
+def find_reservation(customer_name, service_name):
+
+    for reservation in reservations:
+        if (
+            reservation.customer.name == customer_name
+            and
+            reservation.service.name == service_name
+        ):
+            return reservation
+
+    return None        
+
 
 # TKINTER FUNCTIONS
 
@@ -626,13 +615,10 @@ def display_reservations():
 def add_customer_interface():
 
     try:
-
         customer = Customer(
 
             entry_name.get(),
-
             entry_email.get(),
-
             entry_phone.get()
 
         )
@@ -662,39 +648,331 @@ def add_customer_interface():
             str(error)
         )
 
+
+def delete_customer_interface():
+
+    try:
+
+        selected = customer_table.selection()
+
+        if not selected:
+            raise InvalidCustomerError(
+                "Please select a customer."
+            )
+
+        values = customer_table.item(
+            selected[0]
+        )["values"]
+
+        customer_id = values[0]
+
+        delete_customer(customer_id)
+
+        refresh_customer_table()
+
+        update_customer_combobox()
+
+        messagebox.showinfo(
+
+            "Success",
+            "Customer deleted successfully."
+
+        )
+
+    except Exception as error:
+
+        write_log(str(error))
+
+        messagebox.showerror(
+            "Error",
+            str(error)
+
+        )
+
+
 def refresh_customer_table():
 
     customer_table.delete(*customer_table.get_children())
 
     for customer in customers:
-
         customer_table.insert(
-
             "",
-
             "end",
-
             values=(
-
                 customer.id,
-
                 customer.name,
-
                 customer.email,
-
                 customer.phone
-
             )
 
         )
 
 
+def refresh_service_table():
+
+    service_table.delete(*service_table.get_children())
+
+    for service in services:
+
+        service_table.insert(
+            "",
+            "end",
+            values=(
+                service.id,
+                service.description(),
+                service.name,
+                service.price
+            )
+
+        )
+
+
+def update_service_combobox():
+
+    combo_reservation_service["values"] = [
+        service.name
+        for service in services
+
+    ]
+
+def refresh_reservation_table():
+
+    reservation_table.delete(*reservation_table.get_children())
+
+    for reservation in reservations:
+        reservation_table.insert(
+            "",
+            "end",
+            values=(
+                reservation.customer.name,
+                reservation.service.name,
+                reservation.duration,
+                reservation.status
+            )
+
+        )    
+
+
+def create_reservation_interface():
+
+    try:
+
+        customer = find_customer_by_name(
+            combo_customer.get()
+        )
+
+        service = find_service_by_name(
+            combo_reservation_service.get()
+        )
+
+        duration = int(
+            entry_duration.get()
+        )
+
+        create_reservation(
+            customer,
+            service,
+            duration
+        )
+
+        refresh_reservation_table()
+
+        entry_duration.delete(0, tk.END)
+
+        messagebox.showinfo(
+            "Success",
+            "Reservation created successfully."
+        )
+
+    except Exception as error:
+
+        write_log(str(error))
+
+        messagebox.showerror(
+            "Error",
+            str(error)
+
+        )
+
+
+def confirm_reservation_interface():
+
+    try:
+
+        selected = reservation_table.selection()
+
+        if not selected:
+            raise InvalidReservationError(
+                "Please select a reservation."
+            )
+
+        values = reservation_table.item(
+            selected[0]
+        )["values"]
+
+        reservation = find_reservation(
+            values[0],
+            values[1]
+        )
+
+        confirm_reservation(reservation)
+
+        refresh_reservation_table()
+
+        messagebox.showinfo(
+
+            "Success",
+            "Reservation confirmed successfully."
+
+        )
+
+    except Exception as error:
+
+        write_log(str(error))
+
+        messagebox.showerror(
+
+            "Error",
+            str(error)
+
+        )
+
+def cancel_reservation_interface():
+
+    try:
+
+        selected = reservation_table.selection()
+
+        if not selected:
+            raise InvalidReservationError(
+                "Please select a reservation."
+            )
+
+        values = reservation_table.item(
+            selected[0]
+        )["values"]
+
+        reservation = find_reservation(
+            values[0],
+            values[1]
+        )
+
+        cancel_reservation(reservation)
+
+        refresh_reservation_table()
+
+        messagebox.showinfo(
+
+            "Success",
+            "Reservation cancelled successfully."
+
+        )
+
+    except Exception as error:
+
+        write_log(str(error))
+
+        messagebox.showerror(
+
+            "Error",
+            str(error)
+
+        )
+
+def add_service_interface():
+
+    try:
+        service_type = combo_service.get()
+        name = entry_service_name.get()
+        price = float(entry_service_price.get())
+        if service_type == "Room Reservation":
+            service = RoomReservation(
+                name,
+                price
+            )
+
+        elif service_type == "Equipment Rental":
+
+            service = EquipmentRental(
+                name,
+                price
+            )
+
+        else:
+            service = ConsultingService(
+                name,
+                price
+            )
+
+        add_service(service)
+
+        refresh_service_table()
+
+        update_service_combobox()
+
+        entry_service_name.delete(0, tk.END)
+        entry_service_price.delete(0, tk.END)
+
+        messagebox.showinfo(
+            "Success",
+            "Service added successfully."
+        )
+
+    except Exception as error:
+
+        write_log(str(error))
+
+        messagebox.showerror(
+            "Error",
+            str(error)
+        )    
+
+def delete_service_interface():
+
+    try:
+
+        selected = service_table.selection()
+        if not selected:
+            raise InvalidServiceError(
+                "Please select a service."
+            )
+
+        values = service_table.item(
+            selected[0]
+        )["values"]
+
+        service_id = values[0]
+
+        delete_service(service_id)
+
+        refresh_service_table()
+
+        update_service_combobox()
+
+        messagebox.showinfo(
+
+            "Success",
+
+            "Service deleted successfully."
+
+        )
+
+    except Exception as error:
+
+        write_log(str(error))
+
+        messagebox.showerror(
+
+            "Error",
+
+            str(error)
+
+        )        
+
 def update_customer_combobox():
 
     combo_customer["values"] = [
-
         customer.name
-
         for customer in customers
 
     ]
@@ -820,7 +1098,8 @@ button_delete_customer = tk.Button(
 
     customer_frame,
     text="Delete Customer",
-    width=15
+    width=15,
+    command=delete_customer_interface
 
 )
 
@@ -924,10 +1203,9 @@ entry_service_price.grid(row=0, column=5)
 button_add_service = tk.Button(
 
     service_frame,
-
     text="Add Service",
-
-    width=15
+    width=15,
+    command=add_service_interface
 
 )
 
@@ -941,11 +1219,9 @@ button_add_service.grid(
 button_delete_service = tk.Button(
 
     service_frame,
-
     text="Delete Service",
-
-    width=15
-
+    width=15,
+    command=delete_service_interface
 )
 
 button_delete_service.grid(
@@ -959,11 +1235,8 @@ button_delete_service.grid(
 service_table = ttk.Treeview(
 
     service_frame,
-
     columns=("ID", "Type", "Name", "Price"),
-
     show="headings",
-
     height=4
 
 )
@@ -979,7 +1252,6 @@ service_table.column("Name", width=220)
 service_table.column("Price", width=120)
 
 service_table.grid(
-
     row=2,
     column=0,
     columnspan=8,
@@ -1047,10 +1319,9 @@ entry_duration.grid(row=0, column=5)
 button_create_reservation = tk.Button(
 
     reservation_frame,
-
     text="Create Reservation",
-
-    width=18
+    width=18,
+    command=create_reservation_interface
 
 )
 
@@ -1064,10 +1335,9 @@ button_create_reservation.grid(
 button_confirm = tk.Button(
 
     reservation_frame,
-
     text="Confirm",
-
-    width=12
+    width=12,
+    command=confirm_reservation_interface
 
 )
 
@@ -1078,12 +1348,10 @@ button_confirm.grid(
 )
 
 button_cancel = tk.Button(
-
     reservation_frame,
-
     text="Cancel",
-
-    width=12
+    width=12,
+    command=cancel_reservation_interface
 
 )
 
@@ -1097,11 +1365,8 @@ button_cancel.grid(
 reservation_table = ttk.Treeview(
 
     reservation_frame,
-
     columns=("Customer", "Service", "Duration", "Status"),
-
     show="headings",
-
     height=4
 
 )

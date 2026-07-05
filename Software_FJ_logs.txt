@@ -1,2 +1,21 @@
 2026-07-05 16:46:01.672356 - Customer added: juan
 2026-07-05 16:47:08.070583 - Customer added: Juan Pelaez
+2026-07-05 17:47:04.030955 - Service added: Meeting Room A
+2026-07-05 17:49:45.937505 - Invalid email address.
+2026-07-05 17:49:55.577236 - Customer added: Juan
+2026-07-05 17:49:58.479334 - Customer deleted: Juan
+2026-07-05 17:51:47.563094 - Service added: History
+2026-07-05 17:51:49.763117 - Service deleted: History
+2026-07-05 17:58:34.893252 - Customer added: Juan Perez
+2026-07-05 17:58:45.831139 - Service added: Cristianos
+2026-07-05 17:58:54.757075 - Reservation created for Juan Perez
+2026-07-05 18:05:52.585418 - Customer added: Juan Andres
+2026-07-05 18:06:08.163198 - Service added: Microfono
+2026-07-05 18:06:19.875187 - Service added: Room A
+2026-07-05 18:06:35.915208 - Service added: Expositor
+2026-07-05 18:06:49.959278 - Reservation created for Juan Andres
+2026-07-05 18:07:04.021197 - Reservation created for Juan Andres
+2026-07-05 18:07:13.379179 - Reservation created for Juan Andres
+2026-07-05 18:07:48.729261 - Reservation confirmed for Juan Andres
+2026-07-05 18:07:50.963276 - Reservation cancelled for Juan Andres
+2026-07-05 18:07:53.481212 - Reservation confirmed for Juan Andres
