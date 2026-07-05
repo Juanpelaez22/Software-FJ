@@ -163,27 +163,276 @@ class Customer(Entity):
 # SERVICE CLASS
 
 class Service(Entity, ABC):
-    pass
+
+    def __init__(self, name, price):
+
+        super().__init__()
+
+        self.__validate_price(price)
+
+        self.__name = name
+        self.__price = price
+
+
+    # VALIDATIONS
+
+    def __validate_price(self, price):
+
+        if price <= 0:
+
+            raise InvalidServiceError(
+                "Service price must be greater than zero."
+            )
+
+
+    # PROPERTIES
+
+    @property
+    def name(self):
+
+        return self.__name
+
+
+    @property
+    def price(self):
+
+        return self.__price
+
+
+    # POLYMORPHISM
+
+    def display(self):
+
+        return (
+            f"ID: {self.id} | "
+            f"Service: {self.name} | "
+            f"Price: ${self.price}"
+        )
+
+
+    @abstractmethod
+    def description(self):
+
+        pass
+
+
+    @abstractmethod
+    def calculate_cost(self):
+
+        pass
 
 # ROOM RESERVATION
 
 class RoomReservation(Service):
-    pass
+
+    def __init__(self, name, price):
+
+        super().__init__(name, price)
+
+
+    # POLYMORPHISM
+
+    def description(self):
+
+        return (
+            f"Room Reservation - "
+            f"${self.price} per hour"
+        )
+
+
+    # METHOD OVERLOADING (Optional parameters)
+
+    def calculate_cost(
+            self,
+            hours=1,
+            tax=False
+    ):
+
+        if hours <= 0:
+
+            raise InvalidServiceError(
+                "Hours must be greater than zero."
+            )
+
+
+        total = self.price * hours
+
+
+        if tax:
+
+            total *= 1.19
+
+
+        return total
 
 # EQUIPMENT RENTAL
 
 class EquipmentRental(Service):
-    pass
+
+    def __init__(self, name, price):
+
+        super().__init__(name, price)
+
+
+    # POLYMORPHISM
+
+    def description(self):
+
+        return (
+            f"Equipment Rental - "
+            f"${self.price} per day"
+        )
+
+
+    # METHOD OVERLOADING (Optional parameters)
+
+    def calculate_cost(
+            self,
+            days=1,
+            discount=0
+    ):
+
+        if days <= 0:
+
+            raise InvalidServiceError(
+                "Days must be greater than zero."
+            )
+
+
+        if discount < 0 or discount > 1:
+
+            raise InvalidServiceError(
+                "Invalid discount."
+            )
+
+
+        total = self.price * days
+
+        total -= total * discount
+
+        return total
 
 # CONSULTING SERVICE
 
 class ConsultingService(Service):
-    pass
+
+    def __init__(self, name, price):
+
+        super().__init__(name, price)
+
+
+    # POLYMORPHISM
+
+    def description(self):
+
+        return (
+            f"Specialized Consulting - "
+            f"${self.price} per hour"
+        )
+
+
+    # METHOD OVERLOADING (Optional parameters)
+
+    def calculate_cost(
+            self,
+            hours=1,
+            extra_fee=0
+    ):
+
+        if hours <= 0:
+
+            raise InvalidServiceError(
+                "Hours must be greater than zero."
+            )
+
+
+        total = (self.price * hours) + extra_fee
+
+        return total
 
 # RESERVATION CLASS
 
 class Reservation:
-    pass
+
+    def __init__(
+            self,
+            customer,
+            service,
+            duration
+    ):
+
+        if duration <= 0:
+
+            raise InvalidReservationError(
+                "Duration must be greater than zero."
+            )
+
+        self.customer = customer
+        self.service = service
+        self.duration = duration
+        self.status = "Pending"
+
+
+    def confirm(self):
+
+        self.status = "Confirmed"
+
+        write_log(
+            f"Reservation confirmed for {self.customer.name}"
+        )
+
+
+    def cancel(self):
+
+        self.status = "Cancelled"
+
+        write_log(
+            f"Reservation cancelled for {self.customer.name}"
+        )
+
+
+    def process(self):
+
+        try:
+
+            total = self.service.calculate_cost(
+                self.duration
+            )
+
+        except Exception as error:
+
+            write_log(
+                f"Reservation Error: {error}"
+            )
+
+            raise InvalidReservationError(
+                "Reservation could not be processed."
+            ) from error
+
+        else:
+
+            write_log(
+                f"Reservation processed successfully."
+            )
+
+            return total
+
+        finally:
+
+            write_log(
+                "Reservation process finished."
+            )
+
+
+    def display(self):
+
+        return (
+
+            f"Customer: {self.customer.name} | "
+            f"Service: {self.service.name} | "
+            f"Status: {self.status}"
+
+        )
 
 # LISTS
 
