@@ -168,6 +168,7 @@ class Service(Entity, ABC):
 
         super().__init__()
 
+        self.__validate_name(name)
         self.__validate_price(price)
 
         self.__name = name
@@ -175,6 +176,15 @@ class Service(Entity, ABC):
 
 
     # VALIDATIONS
+
+    def __validate_name(self, name):
+
+        if name.strip() == "":
+
+            raise InvalidServiceError(
+                "Service name cannot be empty."
+            )
+
 
     def __validate_price(self, price):
 
@@ -552,7 +562,7 @@ def display_services():
 
         print(service.display())
 
-## SERVICE FUNCTIONS
+## RESERVATION FUNCTIONS
 
 def create_reservation(customer_id, service_id, duration):
 
@@ -588,17 +598,14 @@ def create_reservation(customer_id, service_id, duration):
 
 
 def confirm_reservation(reservation):
-
     reservation.confirm()
 
 
 def cancel_reservation(reservation):
-
     reservation.cancel()
 
 
 def process_reservation(reservation):
-
     return reservation.process()
 
 
@@ -608,12 +615,432 @@ def display_reservations():
 
         print(reservation.display())
 
+
 # TKINTER INTERFACE
+root = tk.Tk()
+
+root.title("Software FJ Management System")
+
+root.geometry("900x400")
+
+root.resizable(False, False)
+
+title_label = tk.Label(
+    root,
+    text="SOFTWARE FJ MANAGEMENT SYSTEM",
+    font=("Arial", 16, "bold")
+)
+
+title_label.pack(pady=10)
+
+# NOTEBOOK
+
+notebook = ttk.Notebook(root)
+
+notebook.pack(
+    fill="both",
+    expand=True,
+    padx=10,
+    pady=10
+)
+
+customers_tab = tk.Frame(notebook)
+services_tab = tk.Frame(notebook)
+reservations_tab = tk.Frame(notebook)
+
+notebook.add(
+    customers_tab,
+    text="Customers"
+)
+
+notebook.add(
+    services_tab,
+    text="Services"
+)
+
+notebook.add(
+    reservations_tab,
+    text="Reservations"
+)
 
 
+customer_frame = tk.LabelFrame(
+    customers_tab,
+    text="Customers",
+    padx=10,
+    pady=10
+)
+
+customer_frame.pack(
+    fill="x",
+    padx=10,
+    pady=10
+)
+
+# Name
+
+tk.Label(customer_frame, text="Name:").grid(
+    row=0,
+    column=0,
+    padx=5,
+    pady=5,
+    sticky="w"
+)
+
+entry_name = tk.Entry(customer_frame, width=25)
+entry_name.grid(row=0, column=1, padx=5)
+
+# Email
+
+tk.Label(customer_frame, text="Email:").grid(
+    row=0,
+    column=2,
+    padx=5,
+    sticky="w"
+)
+
+entry_email = tk.Entry(customer_frame, width=25)
+entry_email.grid(row=0, column=3, padx=5)
+
+# Phone
+
+tk.Label(customer_frame, text="Phone:").grid(
+    row=0,
+    column=4,
+    padx=5,
+    sticky="w"
+)
+
+entry_phone = tk.Entry(customer_frame, width=18)
+entry_phone.grid(row=0, column=5, padx=5)
+
+
+button_add_customer = tk.Button(
+
+    customer_frame,
+    text="Add Customer",
+    width=15
+
+)
+
+button_add_customer.grid(
+    row=1,
+    column=1,
+    padx=10,
+    pady=10
+)
+
+
+button_delete_customer = tk.Button(
+
+    customer_frame,
+    text="Delete Customer",
+    width=15
+
+)
+
+button_delete_customer.grid(
+    row=1,
+    column=3,
+    padx=10,
+    pady=10
+)
+
+customer_table = ttk.Treeview(
+
+    customer_frame,
+    columns=("ID", "Name", "Email", "Phone"),
+    show="headings",
+    height=4
+
+)
+
+customer_table.heading("ID", text="ID")
+customer_table.heading("Name", text="Name")
+customer_table.heading("Email", text="Email")
+customer_table.heading("Phone", text="Phone")
+
+customer_table.column("ID", width=60)
+customer_table.column("Name", width=220)
+customer_table.column("Email", width=320)
+customer_table.column("Phone", width=180)
+
+customer_table.grid(
+
+    row=2,
+    column=0,
+    columnspan=8,
+    padx=10,
+    pady=10,
+    sticky="ew"
+)
+
+# SERVICES SECTION
+service_frame = tk.LabelFrame(
+    services_tab,
+    text="Services",
+    padx=10,
+    pady=10
+)
+
+service_frame.pack(
+    fill="x",
+    padx=10,
+    pady=10
+)
+
+tk.Label(
+    service_frame,
+    text="Type:"
+).grid(row=0, column=0, padx=5, pady=5)
+
+combo_service = ttk.Combobox(
+    service_frame,
+    values=[
+        "Room Reservation",
+        "Equipment Rental",
+        "Consulting Service"
+    ],
+    width=22,
+    state="readonly"
+)
+
+combo_service.grid(row=0, column=1)
+
+combo_service.current(0)
+
+# Service name
+tk.Label(
+    service_frame,
+    text="Name:"
+).grid(row=0, column=2, padx=5)
+
+entry_service_name = tk.Entry(
+    service_frame,
+    width=25
+)
+
+entry_service_name.grid(row=0, column=3)
+
+# Service price
+tk.Label(
+    service_frame,
+    text="Price:"
+).grid(row=0, column=4, padx=5)
+
+entry_service_price = tk.Entry(
+    service_frame,
+    width=15
+)
+
+entry_service_price.grid(row=0, column=5)
+
+# Add Service Button
+button_add_service = tk.Button(
+
+    service_frame,
+
+    text="Add Service",
+
+    width=15
+
+)
+
+button_add_service.grid(
+    row=1,
+    column=1,
+    padx=10,
+    pady=10
+)
+
+button_delete_service = tk.Button(
+
+    service_frame,
+
+    text="Delete Service",
+
+    width=15
+
+)
+
+button_delete_service.grid(
+    row=1,
+    column=3,
+    padx=10,
+    pady=10
+)
+
+# Service Table
+service_table = ttk.Treeview(
+
+    service_frame,
+
+    columns=("ID", "Type", "Name", "Price"),
+
+    show="headings",
+
+    height=4
+
+)
+
+service_table.heading("ID", text="ID")
+service_table.heading("Type", text="Type")
+service_table.heading("Name", text="Name")
+service_table.heading("Price", text="Price")
+
+service_table.column("ID", width=60)
+service_table.column("Type", width=200)
+service_table.column("Name", width=220)
+service_table.column("Price", width=120)
+
+service_table.grid(
+
+    row=2,
+    column=0,
+    columnspan=8,
+    padx=10,
+    pady=10,
+    sticky="ew"
+)
+
+# RESERVATIONS SECTION
+reservation_frame = tk.LabelFrame(
+    reservations_tab,
+    text="Reservations",
+    padx=10,
+    pady=10
+)
+
+reservation_frame.pack(
+    fill="x",
+    padx=10,
+    pady=10
+)
+
+# Customer selection
+tk.Label(
+    reservation_frame,
+    text="Customer:"
+).grid(row=0, column=0, padx=5, pady=5)
+
+combo_customer = ttk.Combobox(
+    reservation_frame,
+    width=25,
+    state="readonly"
+)
+
+combo_customer.grid(row=0, column=1)
+
+# Service selection
+tk.Label(
+    reservation_frame,
+    text="Service:"
+).grid(row=0, column=2, padx=5)
+
+combo_reservation_service = ttk.Combobox(
+    reservation_frame,
+    width=25,
+    state="readonly"
+)
+
+combo_reservation_service.grid(row=0, column=3)
+
+# Duration input
+tk.Label(
+    reservation_frame,
+    text="Duration:"
+).grid(row=0, column=4, padx=5)
+
+entry_duration = tk.Entry(
+    reservation_frame,
+    width=10
+)
+
+entry_duration.grid(row=0, column=5)
+
+# Buttons for reservation actions
+button_create_reservation = tk.Button(
+
+    reservation_frame,
+
+    text="Create Reservation",
+
+    width=18
+
+)
+
+button_create_reservation.grid(
+    row=1,
+    column=1,
+    padx=10,
+    pady=10
+)
+
+button_confirm = tk.Button(
+
+    reservation_frame,
+
+    text="Confirm",
+
+    width=12
+
+)
+
+button_confirm.grid(
+    row=1,
+    column=2,
+    padx=10
+)
+
+button_cancel = tk.Button(
+
+    reservation_frame,
+
+    text="Cancel",
+
+    width=12
+
+)
+
+button_cancel.grid(
+    row=1,
+    column=3,
+    padx=10
+)
+
+# Reservation Table
+reservation_table = ttk.Treeview(
+
+    reservation_frame,
+
+    columns=("Customer", "Service", "Duration", "Status"),
+
+    show="headings",
+
+    height=4
+
+)
+
+reservation_table.heading("Customer", text="Customer")
+reservation_table.heading("Service", text="Service")
+reservation_table.heading("Duration", text="Duration")
+reservation_table.heading("Status", text="Status")
+
+reservation_table.column("Customer", width=220)
+reservation_table.column("Service", width=220)
+reservation_table.column("Duration", width=100)
+reservation_table.column("Status", width=120)
+
+reservation_table.grid(
+    row=2,
+    column=0,
+    columnspan=6,
+    padx=10,
+    pady=10
+)
 
 # MAIN
 
 if __name__ == "__main__":
 
-    print("Software FJ started successfully.")
+    root.mainloop()
